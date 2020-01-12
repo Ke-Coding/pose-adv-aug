@@ -174,5 +174,5 @@ def weights_from_grnd_maps(maps, fgrnd_weight, bgrnd_weight):
     return weights
 
 if __name__=='__main__':
-    print 'Python pts to landmark by Xi Peng'
+    print('Python pts to landmark by Xi Peng')
 

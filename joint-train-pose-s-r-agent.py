@@ -81,7 +81,7 @@ def main():
     # trunc_index = checkpoint.save_prefix_pose.index('lr-0.00025-85')
     # checkpoint.save_prefix_pose = checkpoint.save_prefix_pose[0:trunc_index]
     # print(checkpoint.save_prefix_pose)
-    print 'hg optimizer: ', type(optimizer_hg), optimizer_hg.param_groups[0]['lr']
+    print('hg optimizer: ', type(optimizer_hg), optimizer_hg.param_groups[0]['lr'])
 
     agent_sr = model.create_asn(chan_in=256, chan_out=256,
                                 scale_num=len(dataset.scale_means),
@@ -111,7 +111,7 @@ def main():
     # checkpoint.save_prefix_asn = checkpoint.save_prefix_asn[0:trunc_index]
     # print(checkpoint.save_prefix_asn)
     # adjust_lr(optimizer_asn, 5e-5)
-    print 'agent optimizer: ', type(optimizer_sr), optimizer_sr.param_groups[0]['lr']
+    print('agent optimizer: ', type(optimizer_sr), optimizer_sr.param_groups[0]['lr'])
 
     train_dataset_hg = MPII('dataset/mpii-hr-lsp-normalizer.json',
                             '/bigdata1/zt53/data', is_train=True)
@@ -222,7 +222,7 @@ def train_hg(train_loader, hg, optimizer_hg,
         # save_imgs(img, 'regular-aug-imgs')
         # input and groundtruth
         if i % 2 == 0:
-            print 'regular augmentation'
+            print('regular augmentation')
             img_var = torch.autograd.Variable(img)
             # pts = HumanPts.heatmap2pts(heatmap)
             target_var = torch.autograd.Variable(heatmap.cuda(async=True),
@@ -244,7 +244,7 @@ def train_hg(train_loader, hg, optimizer_hg,
             pckhs_regular.update(pckh[0])
             pckhs.update(pckh[0])
         else:
-            print 'agent augmentation'
+            print('agent augmentation')
             img_var = torch.autograd.Variable(img_std)
 
             pred_scale_distri, pred_rotation_distri = hg(img_var, agent_sr,

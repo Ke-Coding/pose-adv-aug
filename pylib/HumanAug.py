@@ -267,5 +267,5 @@ def fliplr(x):
 
 
 if __name__=='__main__':
-    print 'Face Augmentation by Xi Peng'
+    print('Face Augmentation by Xi Peng')
 

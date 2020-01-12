@@ -108,10 +108,10 @@ class _Hourglass(nn.Module):
         height = pred_masks.size(2)
         width = pred_masks.size(3)
         assert height == width
-        # print pred_masks.size()
+        # print(pred_masks.size())
         dropout_masks = torch.ones(pred_masks.size()).cuda()
         all_size = height * width
-        # print all_size
+        # print(all_size)
         probs = F.softmax(pred_masks.view(sample_num, -1)).data.cpu().numpy()
         # ys = torch.zeros(sample_num, dropout_num)
         # xs = torch.zeros(sample_num, dropout_num)
@@ -119,18 +119,18 @@ class _Hourglass(nn.Module):
         for i in range(0, sample_num):
             # per_pred_mask = pred_masks[i]
             # prob = softmax(per_pred_mask.view(1, -1)).data.cpu().numpy()
-            # print probs[i]
+            # print(probs[i])
             dropout_indexes = np.random.choice(all_size, dropout_num, p=probs[i], replace=False)
-            # print dropout_indexes
+            # print(dropout_indexes)
             for j in range(0, len(dropout_indexes)):
                 y = dropout_indexes[j] / width
                 x = dropout_indexes[j] % width
-                # print y, x
+                # print(y, x)
                 dropout_masks[i, 0, y, x] = 0
                 # ys[i, j] = y
                 # xs[i, j] = x
                 indexes[i, j] = dropout_indexes[j]
-                # print dropout_masks
+                # print(dropout_masks)
         # exit()
         dropout_masks = torch.autograd.Variable(dropout_masks, requires_grad=False)
         return dropout_masks, indexes
@@ -167,12 +167,12 @@ class _Hourglass(nn.Module):
                 pred_scale_distri, pred_rotation_distri = asn(asn_input, is_aug=True)
                 # pred_scale_distri, pred_rotation_distri = asn(asn_input)
                 if is_half_hg:
-                    # print 'hg augmentation half hg'
+                    # print('hg augmentation half hg')
                     return pred_scale_distri, pred_rotation_distri
             else:
                 pred_masks = asn(asn_input, is_dropout=True)
                 if is_half_hg:
-                    # print 'hg dropout half hg'
+                    # print('hg dropout half hg')
                     return pred_masks
                 else:
                     dropout_masks, indexes = self._sample_mask(pred_masks)
@@ -204,10 +204,10 @@ class _Hourglass(nn.Module):
 
         if asn is not None:
             if is_aug:
-                # print 'hg augmentation whole hg'
+                # print('hg augmentation whole hg')
                 return x, pred_scale_distri, pred_rotation_distri
             else:
-                # print 'hg dropout whole hg'
+                # print('hg dropout whole hg')
                 return x, pred_masks, indexes, dropout_masks
         else:
             return x
@@ -293,36 +293,36 @@ class _Hourglass_Wrapper(nn.Module):
             # print('hg %d' % i)
             if i == 0:
                 if asn is not None:
-                    print 'adversarial hg ', i
+                    print('adversarial hg ', i)
                     assert is_aug != is_dropout
                     if is_aug:
-                        print 'augmentation'
+                        print('augmentation')
                         if is_half_hg:
-                            print 'half hg'
+                            print('half hg')
                             pred_scale_distri, pred_rotation_distri =\
                                 self.hg[i](x, asn=asn, is_half_hg=is_half_hg, is_aug=is_aug)
                             return pred_scale_distri, pred_rotation_distri
                         else:
-                            print 'whole hg'
+                            print('whole hg')
                             y, pred_scale_distri, pred_rotation_distri = self.hg[i](x, asn=asn, is_aug=is_aug)
                     elif is_dropout:
-                        print 'dropout'
+                        print('dropout')
                         if is_half_hg:
-                            print 'half hg'
+                            print('half hg')
                             pred_mask = self.hg[i](x, asn=asn, is_half_hg=is_half_hg, is_dropout=is_dropout)
                             return pred_mask
                         else:
-                            print 'whole hg'
+                            print('whole hg')
                             y, pred_mask, indexes, dropout_masks = self.hg[i](x, asn=asn, is_dropout=is_dropout)
                 else:
-                    # print 'regular hg ', i
+                    # print('regular hg ', i)
                     y = self.hg[i](x)
             else:
                 if is_dropout:
-                    print 'dropout hg ', i
+                    print('dropout hg ', i)
                     y = self.hg[i](x, dropout_masks=dropout_masks)
                 else:
-                    # print 'regular hg ', i
+                    # print('regular hg ', i)
                     y = self.hg[i](x)
             y = self.post_res[i](y)
             y = self.linear[i](y)
@@ -350,8 +350,8 @@ class ASN(nn.Module):
     def __init__(self, chan_in, chan_out, scale_num, rotation_num, is_aug=False, is_dropout=False):
         assert is_aug != is_dropout
         if is_aug:
-            print 'scale number is', scale_num
-            print 'rotation number is', rotation_num
+            print('scale number is', scale_num)
+            print('rotation number is', rotation_num)
         super(ASN, self).__init__()
         self.num_modules = 3
         self.chan_in = chan_in
@@ -420,17 +420,17 @@ class ASN(nn.Module):
         # x = self.deep_merge2(x)
         x = self.deep_merge(x)
         # out = self.out_conv(x)
-        # print x.size()
+        # print(x.size())
         # x = self.avgpool(x)
         # x = x.view(x.size(0), -1)
-        # # print x.size()
+        # # print(x.size())
         # scale_distri = self.fc_scale(x)
         # rotation_distri = self.fc_rotation(x)
         # return scale_distri, rotation_distri
         if is_aug:
             x = self.avgpool(x)
             x = x.view(x.size(0), -1)
-            # print x.size()
+            # print(x.size())
             scale_distri = self.fc_scale(x)
             rotation_distri = self.fc_rotation(x)
             return scale_distri, rotation_distri

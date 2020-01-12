@@ -42,9 +42,9 @@ def main():
     # num1 = get_n_params(net)
     # num2 = get_n_trainable_params(net)
     # num3 = get_n_conv_params(net)
-    # print 'number of params: ', num1
-    # print 'number of trainalbe params: ', num2
-    # print 'number of conv params: ', num3
+    # print('number of params: ', num1)
+    # print('number of trainalbe params: ', num2)
+    # print('number of conv params: ', num3)
     # exit()
     net = torch.nn.DataParallel(net).cuda()
     """optimizer"""
@@ -63,7 +63,7 @@ def main():
         # checkpoint.save_prefix = exp_dir + '/'
     else:
         checkpoint.save_prefix = exp_dir + '/'
-    print 'save prefix: ', checkpoint.save_prefix
+    print('save prefix: ', checkpoint.save_prefix)
     # model = {'state_dict': net.state_dict()}
     # save_path = checkpoint.save_prefix + 'test-model-size.pth.tar'
     # torch.save(model, save_path)
@@ -83,7 +83,7 @@ def main():
         num_workers=opt.nThreads, pin_memory=True)
 
 
-    print type(optimizer), optimizer.param_groups[0]['lr']
+    print(type(optimizer), optimizer.param_groups[0]['lr'])
     # idx = range(0, 16)
     # idx = [e for e in idx if e not in (6, 7, 8, 9, 12, 13)]
     idx = [0, 1, 2, 3, 4, 5, 10, 11, 14, 15]
@@ -133,10 +133,10 @@ def train(train_loader, net, optimizer, epoch, visualizer, idx, opt):
     end = time.time()
     for i, (img, heatmap, c, s, r, grnd_pts,
             normalizer) in enumerate(train_loader):
-        # print 'r: ', r
-        # print 's: ', s
-        # print 'grnd_pts: ', pts
-        # print 'pts_aug_back: ', pts_aug_back
+        # print('r: ', r)
+        # print('s: ', s)
+        # print('grnd_pts: ', pts)
+        # print('pts_aug_back: ', pts_aug_back)
         # exit()
         """measure data loading time"""
         data_time.update(time.time() - end)
@@ -168,7 +168,7 @@ def train(train_loader, net, optimizer, epoch, visualizer, idx, opt):
         batch_time.update(time.time() - end)
         end = time.time()
 
-        # print log
+        # print(log)
         losses.update(loss.data[0])
         # pred_pts = HumanPts.heatmap2pts(output[-1].cpu().data)  # b x L x 2
         # pts = HumanPts.heatmap2pts(target_var.cpu().data)
@@ -244,7 +244,7 @@ def validate(val_loader, net, epoch, visualizer, idx, num_classes):
         batch_time.update(time.time() - end)
         end = time.time()
 
-        # print log
+        # print(log)
         losses.update(loss.data[0])
         loss_dict = OrderedDict( [('loss', losses.avg),
                                   ('pckh', pckhs.avg),

@@ -34,20 +34,20 @@ class AGENT(data.Dataset):
         self.scale_var = 0.05
         self.rotation_means = np.arange(-60, 61, 20)
         self.rotaiton_var = 5
-        print 'scale gaussian number is', len(self.scale_means)
-        print 'rotation gaussian number is', len(self.rotation_means)
+        print('scale gaussian number is', len(self.scale_means))
+        print('rotation gaussian number is', len(self.rotation_means))
 
         # create train/val split
         with open(jsonfile, 'r') as anno_file:
             self.anno = json.load(anno_file)
-        print 'loading json file is done...'
+        print('loading json file is done...')
         self.train, self.valid = [], []
         for idx, val in enumerate(self.anno):
             if val['dataset'] == 'MPII':
                 if val['objpos'][0] <= 0 or val['objpos'][1] <= 0:
-                    print 'invalid center: ', val['objpos']
-                    print 'image name: ', val['img_paths']
-                    print 'dataset: ', val['dataset']
+                    print('invalid center: ', val['objpos'])
+                    print('image name: ', val['img_paths'])
+                    print('dataset: ', val['dataset'])
                     # continue
                 if val['isValidation'] == True:
                     self.valid.append(idx)
@@ -96,7 +96,7 @@ class AGENT(data.Dataset):
         return x
 
     def __getitem__(self, index):
-        # print 'loading image', index
+        # print('loading image', index)
         if self.img_index_list is None:
             a = self.anno[self.train[index]]
         else:
@@ -109,7 +109,7 @@ class AGENT(data.Dataset):
         pts = pts[:, 0:2]
         # c = torch.Tensor(a['objpos']) - 1
         c = torch.Tensor(a['objpos'])
-        # print c
+        # print(c)
         s = torch.Tensor([a['scale_provided']])
         # r = torch.FloatTensor([0])
         # exit()
@@ -118,11 +118,11 @@ class AGENT(data.Dataset):
             s = s * 1.25
             normalizer = a['normalizer'] * 0.6
         elif a['dataset'] == 'LEEDS':
-            print 'using lsp data'
+            print('using lsp data')
             s = s * 1.4375
             normalizer = torch.dist(pts[2, :], pts[13, :])
         else:
-            print 'no such dataset {}'.format(a['dataset'])
+            print('no such dataset {}'.format(a['dataset']))
 
         # For single-person pose estimation with a centered/scaled figure
         img = imutils.load_image(img_path)
@@ -144,7 +144,7 @@ class AGENT(data.Dataset):
             s_list = [s_aug.clone(), s.clone()]
             r_list = [torch.FloatTensor([0]), torch.FloatTensor([r_aug])]
             grnd_pts_list = [pts.clone(), pts.clone()]
-            # print 'type of normalizaer: ', type(normalizer)
+            # print('type of normalizaer: ', type(normalizer))
             normalizer_list = [normalizer, normalizer]
             img_list[0], heatmap_list[0] = self.gen_img_heatmap(c.clone(), s_aug.clone(), 0,
                                                                 img.clone(), pts.clone())
@@ -184,7 +184,7 @@ class AGENT(data.Dataset):
 
     def gen_img_heatmap(self, c, s, r, img, pts):
         # Prepare image and groundtruth map
-        # print s[0]/s0[0], r
+        # print(s[0]/s0[0], r)
         inp = HumanAug.crop(imutils.im_to_numpy(img), c.numpy(),
                             s.numpy(), r, self.inp_res, self.std_size)
         inp = imutils.im_to_torch(inp).float()

@@ -54,8 +54,8 @@ def ReadFloatFromFile(path):
 
 def WriteFloatToFile(path,lines):
     with open(path,'w') as fd:
-        print lines.shape
-        print lines.ndim 
+        print(lines.shape)
+        print(lines.ndim)
 
 def DeleteThenCreateFolder(dir):
     if os.path.exists(dir):
@@ -64,4 +64,4 @@ def DeleteThenCreateFolder(dir):
 
 
 if __name__=='__main__':
-    print 'Python IO Lib by Xi Peng'
+    print('Python IO Lib by Xi Peng')

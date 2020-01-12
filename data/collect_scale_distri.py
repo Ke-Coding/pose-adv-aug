@@ -27,27 +27,27 @@ class MPII(data.Dataset):
         self.std_size = std_size
         self.scale_means = np.arange(-0.6, 0.61, 0.2)
         self.scale_var = 0.05
-        print 'scale gaussian number is', len(self.scale_means)
-        print 'scale means: ', self.scale_means
+        print('scale gaussian number is', len(self.scale_means))
+        print('scale means: ', self.scale_means)
         # self.rotation_means = np.arange(-50, 50, 10)
         self.num = len(self.scale_means)
         # if grnd_scale_tensor is not None:
         #     self.grnd_scale_tensor = grnd_scale_tensor
 
             # self.index_list = index_list
-            # print self.grnd_scale_tensor.size(), type(self.grnd_scale_tensor)
+            # print(self.grnd_scale_tensor.size(), type(self.grnd_scale_tensor))
 
             # create train/val split
         with open(jsonfile, 'r') as anno_file:
             self.anno = json.load(anno_file)
-        print 'loading json file is done...'
+        print('loading json file is done...')
         self.train, self.valid = [], []
         for idx, val in enumerate(self.anno):
             if val['dataset'] == 'MPII':
                 if val['objpos'][0] <= 0 or val['objpos'][1] <= 0:
-                    print 'invalid center: ', val['objpos']
-                    print 'image name: ', val['img_paths']
-                    print 'dataset: ', val['dataset']
+                    print('invalid center: ', val['objpos'])
+                    print('image name: ', val['img_paths'])
+                    print('dataset: ', val['dataset'])
                     # continue
                 if val['isValidation'] == True:
                     self.valid.append(idx)
@@ -55,9 +55,9 @@ class MPII(data.Dataset):
                     self.train.append(idx)
         # self.mean, self.std = self._compute_mean()
         if self.is_train:
-            print 'total training images: ', len(self.train)
+            print('total training images: ', len(self.train))
         else:
-            print 'total validation images: ', len(self.valid)
+            print('total validation images: ', len(self.valid))
 
         # if grnd_scale_tensor is not None:
         #     if self.is_train:
@@ -100,7 +100,7 @@ class MPII(data.Dataset):
         return x
 
     def __getitem__(self, index):
-        # print 'loading image', index
+        # print('loading image', index)
         if self.is_train:
             a = self.anno[self.train[index]]
         else:
@@ -112,7 +112,7 @@ class MPII(data.Dataset):
         pts = pts[:, 0:2]
         # c = torch.Tensor(a['objpos']) - 1
         c = torch.Tensor(a['objpos'])
-        # print c
+        # print(c)
         s = torch.Tensor([a['scale_provided']])
         r = torch.Tensor([0])
         # exit()
@@ -121,11 +121,11 @@ class MPII(data.Dataset):
             s = s * 1.25
             normalizer = a['normalizer'] * 0.6
         elif a['dataset'] == 'LEEDS':
-            print 'using lsp data'
+            print('using lsp data')
             s = s * 1.4375
             normalizer = torch.dist(pts[2, :], pts[13, :])
         else:
-            print 'no such dataset {}'.format(a['dataset'])
+            print('no such dataset {}'.format(a['dataset']))
 
         # For single-person pose estimation with a centered/scaled figure
         img = imutils.load_image(img_path)
@@ -166,7 +166,7 @@ class MPII(data.Dataset):
 
     def gen_img_heatmap(self, c, s, r, img, pts):
         # Prepare image and groundtruth map
-        # print s[0]/s0[0], r
+        # print(s[0]/s0[0], r)
         inp = HumanAug.crop(imutils.im_to_numpy(img), c.numpy(),
                             s.numpy(), r, self.inp_res, self.std_size)
         inp = imutils.im_to_torch(inp).float()

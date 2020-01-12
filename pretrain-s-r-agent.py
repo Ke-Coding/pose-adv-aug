@@ -68,7 +68,7 @@ def main():
     #     num_classes = 16
     os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpu_id
 
-    print 'collecting training scale and rotation distributions ...\n'
+    print('collecting training scale and rotation distributions ...\n')
     train_scale_distri = read_grnd_distri_from_txt(train_scale_path)
     train_rotation_distri = read_grnd_distri_from_txt(train_rotation_path)
     dataset = MPII('dataset/mpii-hr-lsp-normalizer.json', '/bigdata1/zt53/data',
@@ -77,7 +77,7 @@ def main():
     train_loader = torch.utils.data.DataLoader(dataset, batch_size=opt.bs, shuffle=True,
                                             num_workers=opt.nThreads, pin_memory=True)
 
-    print 'collecting validation scale and rotation distributions ...\n'
+    print('collecting validation scale and rotation distributions ...\n')
     val_scale_distri = read_grnd_distri_from_txt(val_scale_path)
     val_rotation_distri = read_grnd_distri_from_txt(val_rotation_path)
     dataset = MPII('dataset/mpii-hr-lsp-normalizer.json', '/bigdata1/zt53/data',
@@ -101,7 +101,7 @@ def main():
         checkpoint_agent.load_checkpoint(agent, optimizer, train_history)
         # adjust_lr(optimizer, opt.lr)
         # lost_joint_count_path = os.path.join(opt.exp_dir, opt.exp_id, opt.asdn_dir, 'joint-count-finetune.txt')
-    print 'agent: ', type(optimizer), optimizer.param_groups[0]['lr']
+    print('agent: ', type(optimizer), optimizer.param_groups[0]['lr'])
 
     if opt.dataset == 'mpii':
         num_classes = 16
@@ -186,10 +186,10 @@ def train(train_loader, hg, agent, optimizer, epoch, visualizer, opt):
         # print test_logsoftmax, log_pred_scale_distri
         loss_scale = F.kl_div(log_pred_scale_distri, scale_distri_var) * scale_distri.size(1)
         if loss_scale.data[0] < -1e-8:
-            print 'scale loss < 0'
-            print 'pred_scale_distri: ', pred_scale_distri.data
-            print 'log_pred_scale_distri: ', log_pred_scale_distri.data
-            print 'scale_distri: ', scale_distri
+            print('scale loss < 0')
+            print('pred_scale_distri: ', pred_scale_distri.data)
+            print('log_pred_scale_distri: ', log_pred_scale_distri.data)
+            print('scale_distri: ', scale_distri)
             exit()
         log_pred_rotation_distri = logsoftmax(pred_rotation_distri)
         loss_rotation = F.kl_div(log_pred_rotation_distri, rotation_distri_var) * rotation_distri.size(1)
